@@ -93,16 +93,53 @@ namespace iTech.Controllers
             
         // }
 
-        [HttpGet("DataFromXml")]
-        public async Task<List<Person>> write()
-        {
-            var person = new List<Person>();
+        // [HttpGet("DataFromXml")]
+        // public async Task<List<Person>> write(IFormFile file)
+        // {
+        //     var person = new List<Person>();
             
-                XDocument doc = XDocument.Load(@"C:\Prog\iTech\xml\iTech.xml");
-                foreach(XElement element in doc.Descendants("Person"))
+
+            // using (var stream = file.OpenReadStream())
+            // {
+            //     XDocument doc = XDocument.Load(stream);
+                // foreach(XElement element in doc.Descendants("Person"))
+                // {
+                //     Person per = new Person();
+                //     per.Id = Guid.Parse(element.Element("Id").Value);
+                //     per.Name = element.Element("Name").Value;
+                //     per.Age = element.Element("Age").Value;
+                //     per.Pet1 = element.Element(name: "Pet1").Value;
+                //     per.Pet1Type = element.Element(name: "Pet1Type").Value;
+                //     per.Pet2 = element.Element(name: "Pet2").Value;
+                //     per.Pet2Type = element.Element(name: "Pet2Type").Value;
+                //     per.Pet3 = element.Element(name: "Pet3").Value;
+                //     per.Pet3Type = element.Element(name: "Pet3Type").Value;
+                //     person.Add(per);
+                // }
+            // }
+            
+            
+                
+            
+        //     return person;
+        // }
+
+        [HttpPost]
+        public async Task<List<Person>> Gett(IFormFile file)
+        {
+            List<Person> person = new List<Person>();
+            
+            using(var str = new MemoryStream())
+            {
+                await file.CopyToAsync(str);
+                str.Position = 0;
+                var xml = XDocument.Load(str);
+                
+                foreach(XElement element in xml.Descendants("Person"))
                 {
                     Person per = new Person();
                     per.Id = Guid.Parse(element.Element("Id").Value);
+                    per.Name = element.Element("Name").Value;
                     per.Age = element.Element("Age").Value;
                     per.Pet1 = element.Element(name: "Pet1").Value;
                     per.Pet1Type = element.Element(name: "Pet1Type").Value;
@@ -112,7 +149,7 @@ namespace iTech.Controllers
                     per.Pet3Type = element.Element(name: "Pet3Type").Value;
                     person.Add(per);
                 }
-            
+            }
             return person;
         }
         
