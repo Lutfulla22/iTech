@@ -12,7 +12,7 @@ using iTech.Models;
 namespace iTech.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220910051823_Initial")]
+    [Migration("20220912133747_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

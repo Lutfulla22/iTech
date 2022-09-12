@@ -1,6 +1,9 @@
+using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using ClosedXML.Excel;
+using CsvHelper;
 using iTech.Models;
 using iTech.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -15,13 +18,15 @@ namespace iTech.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IPersonService _person;
+        private readonly IWebHostEnvironment _environment;
 
-        public ReadController(IPersonService person)
+        public ReadController(IPersonService person, IWebHostEnvironment environment)
         {
             _person = person;
+            _environment = environment;
         }
 
-        [HttpPost]
+        [HttpPost("xlsx")]
         public async Task<ActionResult> Create (IFormFile file)
         {
             var person = new List<Person>();
@@ -62,9 +67,55 @@ namespace iTech.Controllers
                 return Ok(serialiser);
         }
 
-        [HttpGet]
-        public  List<Person> Get()
-         => _person.GetAll();
+        // [HttpGet("Get")]
+        // public  List<Person> write(IFormFile file)
+        // {
+        //     var person = new List<Person>();
+
+        //     XmlDocument doc = new XmlDocument();
+        //     doc.Load(string.Concat(_environment.WebRootPath, $"/iTech.xml"));
+        //     foreach(XmlNode node in doc.SelectNodes("Person"))
+        //     {
+        //         person.Add(new Person
+        //         {
+        //             Id = Guid.Parse(node["Id"].InnerText),
+        //             Name = node["Name"].InnerText,
+        //             Pet1 = node["Pet1"].InnerText,
+        //             Pet1Type = node["Pet1Type"].InnerText,
+        //             Pet2 = node["Pet2"].InnerText,
+        //             Pet2Type = node["Pet2Type"].InnerText,
+        //             Pet3 = node["Pet3"].InnerText,
+        //             Pet3Type = node["Pet3Type"].InnerText
+        //         });
+                
+        //     }
+        //     return person;
+            
+        // }
+
+        [HttpGet("DataFromXml")]
+        public async Task<List<Person>> write()
+        {
+            var person = new List<Person>();
+            
+                XDocument doc = XDocument.Load(@"C:\Prog\iTech\xml\iTech.xml");
+                foreach(XElement element in doc.Descendants("Person"))
+                {
+                    Person per = new Person();
+                    per.Id = Guid.Parse(element.Element("Id").Value);
+                    per.Age = element.Element("Age").Value;
+                    per.Pet1 = element.Element(name: "Pet1").Value;
+                    per.Pet1Type = element.Element(name: "Pet1Type").Value;
+                    per.Pet2 = element.Element(name: "Pet2").Value;
+                    per.Pet2Type = element.Element(name: "Pet2Type").Value;
+                    per.Pet3 = element.Element(name: "Pet3").Value;
+                    per.Pet3Type = element.Element(name: "Pet3Type").Value;
+                    person.Add(per);
+                }
+            
+            return person;
+        }
+        
             
         
     }
