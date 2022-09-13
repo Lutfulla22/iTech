@@ -26,7 +26,7 @@ namespace iTech.Controllers
             _environment = environment;
         }
 
-        [HttpPost("xlsx")]
+        [HttpPost("FromXlsxTodbAndXml")]
         public async Task<ActionResult> Create (IFormFile file)
         {
             var person = new List<Person>();
@@ -124,7 +124,7 @@ namespace iTech.Controllers
         //     return person;
         // }
 
-        [HttpPost]
+        [HttpPost("FromXmlFileToList")]
         public async Task<List<Person>> Gett(IFormFile file)
         {
             List<Person> person = new List<Person>();
@@ -152,7 +152,19 @@ namespace iTech.Controllers
             }
             return person;
         }
-        
+
+        [HttpGet("GetFromDbToXml")]
+        public async Task<List<Person>> Get()
+        {
+            var person = _person.GetAll();
+            XmlSerializer serialiser = new XmlSerializer(typeof(List<Person>));
+            TextWriter filestream = new StreamWriter(@"C:\Prog\iTech\xml\itechh.xml");
+            serialiser.Serialize(filestream, person);
+
+            filestream.Close();
+
+            return person;
+        }
             
         
     }
